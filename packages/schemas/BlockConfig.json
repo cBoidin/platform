@@ -16,9 +16,6 @@
     "type": {
       "$ref": "https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json#/definitions/BlockType"
     },
-    "labels": {
-      "$ref": "https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json#/definitions/Labels"
-    },
     "configurations": {
       "type": "array",
       "minItems": 1,
@@ -39,7 +36,7 @@
             "required": [
               "url",
               "method",
-              "pure",
+              "cachePolicy",
               "parameters",
               "ui"
             ],
@@ -53,16 +50,22 @@
               "method": {
                 "type": "string",
                 "title": "block http method",
-                "description": "Only GET is supported right now",
-                "enum": ["GET"],
-                "examples": ["GET"]
+                "description": "Only GET and POST are supported right now",
+                "enum": ["GET", "POST"],
+                "examples": ["GET", "POST"]
               },
-              "pure": {
-                "type": "boolean",
-                "title": "Block purity",
-                "description": "Defines the Block data cache policy : if pure=true, data are put in cache for 1 hour ; if pure=false, the endpoint is called by CMS for every rendering (ie. no cache)",
+              "cachePolicy": {
+                "type": "string",
+                "title": "Block cache policy",
+                "description": "Defines the Block data cache policy : PURE (cache one hour), IMPURE (cache few minutes), IMPURE_WITHOUT_STALE (cache few minutes, and guarantees no outdated data), ENDLESS (cache indefinitely) or NO_CACHE (at your own risk)",
                 "default": false,
-                "examples": ["true", "false"]
+                "examples": ["PURE", "IMPURE", "IMPURE_WITHOUT_STALE", "ENDLESS", "NO_CACHE"]
+              },
+              "compliantWithLastModifiedHeader": {
+                "type": "boolean",
+                "title": "Block is compliant with lastModified header",
+                "description": "Indicate if the block is compliant with the LastModified Header (leading to a 304 status)",
+                "default": false
               },
               "parameters": {
                 "type": "array",
@@ -70,6 +73,16 @@
                 "description": "Paramètres HTTP à positionner lors des appels au endpoint",
                 "items": {
                   "$ref": "http://swagger.io/v2/schema.json#/definitions/parameter"
+                }
+              },
+              "consumes": {
+                "type": "array",
+                "title": "A list of MIME types the API can consume.",
+                "description": "A list of MIME types the API can consume. Only 'application/json' is supported right now.",
+                "items": {
+                  "type": "string",
+                  "title": "MIME type",
+                  "description": "MIME type the API can consume"
                 }
               },
               "ui": {
@@ -104,6 +117,19 @@
                     "examples": [
                       "http://my.domain.com/blockprovider/block/rpc/admin"
                     ]
+                  },
+                  "hooks": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "minItems": 0,
+                    "maxItems": 10,
+                    "items": {
+                      "type": "string",
+                      "title": "Standard methods handled by the Block RPC endpoint",
+                      "description": "Standard methods handled by the Block RPC endpoint",
+                      "enum": ["$before-save","$after-save"],
+                      "examples": ["$before-save"]
+                    }
                   }
                 }
               }
@@ -116,7 +142,9 @@
               "required": [
                 "name",
                 "engine",
-                "source"
+                "source",
+                "targetFormat",
+                "position"
               ],
               "properties": {
                 "name": {
@@ -134,11 +162,11 @@
                   "description": "The position where the CMS will render the block in the page. (placeholder value means the block must to be render in a page placeholder)",
                   "enum": ["placeholder", "head-top", "head-bottom", "body-top", "body-bottom"]
                 },
-                "labels": {
-                  "$ref": "https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json#/definitions/Labels"
-                },
                 "engine": {
                   "$ref": "https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json#/definitions/BlockTemplateEngine"
+                },
+                "targetFormat": {
+                  "$ref": "https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json#/definitions/BlockTemplateTargetFormat"
                 },
                 "source": {
                   "type": "string",
@@ -151,32 +179,52 @@
                 "assets": {
                   "type": "object",
                   "properties": {
+                    "sharedJs": {
+                      "type": "array",
+                      "items": {
+                        "title": "Shared JS assets",
+                        "description": "JS Library or shared JS in page",
+                        "type": "string"
+                      }
+                    },
+                    "sharedCss": {
+                      "type": "array",
+                      "items": {
+                        "title": "Shared css assets",
+                        "description": "css Library or shared css in page",
+                        "type": "string"
+                      }
+                    },
                     "js": {
                       "type": "array",
                       "items": {
                         "title": "Js assets",
-                        "description": "JS URL"
+                        "description": "JS URL",
+                        "type": "string"
                       }
                     },
                     "css": {
                       "type": "array",
                       "items": {
                         "title": "Css assets",
-                        "description": "CSS URL"
+                        "description": "CSS URL",
+                        "type": "string"
                       }
                     },
                     "fonts": {
                       "type": "array",
                       "items": {
                         "title": "Fonts assets",
-                        "description": "Font URL"
+                        "description": "Font URL",
+                        "type": "string"
                       }
                     },
                     "images": {
                       "type": "array",
                       "items": {
                         "title": "Images assets",
-                        "description": "Image URL - this type of assets if deprecated - please do not use it"
+                        "description": "Image URL - this type of assets if deprecated - please do not use it",
+                        "type": "string"
                       }
                     }
                   }
@@ -223,6 +271,17 @@
                     }
                   }
                 }
+              }
+            }
+          },
+          "documentation": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "title": "Block documentation HTTP url",
+                "description": "The HTTP(S) address of the block documentation",
+                "examples": ["https://my.domain.com/documentation"]
               }
             }
           }

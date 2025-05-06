@@ -1,7 +1,7 @@
 # Block
 
-Les Blocks sont les éléments atomiques du CMS Ouest France. Un Block est un composant Web (HTML/CSS/JS) présent au sein
-d'une ou de plusieurs pages Ouest France.
+Les Blocks sont les éléments atomiques du CMS Ouest-France. Un Block est un composant Web (HTML/CSS/JS) présent au sein
+d'une ou de plusieurs pages Ouest-France.
 
 Exemple :
 
@@ -9,11 +9,15 @@ Exemple :
 - Block Météo
 - Block Header de page
 
-Un Block peut être mise en œuvre par tout partenaire Ouest France afin de fournir de nouveaux services au sein des
-pages du groupe Ouest France.
+Un Block peut être mis en œuvre par tout partenaire Ouest-France afin de fournir de nouveaux services au sein des
+pages du groupe Ouest-France.
 
-Pour ce faire, un Block doit fournir un contrat d'interface standard (ie. contrat du Block) permettant l'enregistrement de ce dernier au sein
-de la plateforme Ouest France.
+Pour ce faire, un Block doit fournir un contrat d'interface standard (ie. contrat du Block) permettant l'enregistrement de ce dernier au sein de la plateforme Ouest-France.
+
+Note: le concept de block provider permet de réunir plusieurs type de block au sein d'un même composant. 
+Un block provider peut par exemple exposer un block pour la météo, ainsi qu'un block pour afficher la marée. 
+De manière générale, un block provider expose des block qui traitent du même sujet. Par ailleurs, un block provider peut exposer au maximum 70 types de block.
+
 
 ## Cycle de vie d'un Block
 
@@ -32,7 +36,7 @@ de la plateforme Ouest France.
 5. Intégration de la réponse BlockData au sein du contexte de rendu
 
     - Remarque : le contexte de rendu d'un Block contient ses paramètres d'entrée, la réponse BlockData ou encore les informations
-utilisateur)
+utilisateur
     - Exemple : Block Meteo
 
       - Paramètres d'entrée du Block : latitude=45 - longitude=-12 - date=12/06/2018
@@ -69,7 +73,6 @@ Ce contrat définit les éléments suivants :
 
 - Nom du contrat
 - Type du contrat
-- Labels du contrat (permettant de catégoriser finement le Block)
 - Un ou plusieurs templates [Mustache](https://mustache.github.io/) (ie. moteur de template HTML)
 
 Exemple Mustache :
@@ -85,16 +88,16 @@ Exemple Mustache :
 </div>
 ```
 
-- Endpoint HTTP permettant d'accéder à des informations contextuelles lors du rendu du Block
+- Endpoint HTTPS permettant d'accéder à des informations contextuelles lors du rendu du Block
 - Formulaire de paramétrage permettant de fournir des données d'entrée au Block (ces données peuvent être à destination des templates)
 
 Exemple : [Block Meteo](packages/blockprovider-example-meteo/BlockProviderConfig.json)
 
-Remarque : l'ensemble des propriétés du contrat Block sont présentées [ici](packages/documentation/BlockConfig.md)
+Remarque : l'ensemble des propriétés du contrat Block sont présentées [ici](/packages/schemas/BlockConfig.json)
 
 ## UI
 
-Le contrat de Block contient notamment un élément "ui". Cet élément décrit le formulaire HTML, affiché au sein de l'éditeur de pages Ouest France, destiné
+Le contrat de Block contient notamment un élément "ui". Cet élément décrit le formulaire HTML, affiché au sein de l'éditeur de pages Ouest-France, destiné
 à la configuration du Block.
 
 Ce formulaire doit respecter la [spécification suivante](https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json#/definitions/UISchema).
@@ -115,7 +118,7 @@ Remarques :
 
 # BlockProvider
 
-Un BlockProvider est le nom donné aux partenaires Ouest France fournissant des Blocks. Un BlockProvider doit fournir un 
+Un BlockProvider est le nom donné aux partenaires Ouest-France fournissant des Blocks. Un BlockProvider doit fournir un 
 endpoint fournissant l'ensemble des contrats de Blocks dont il a la charge.
 
 La définition d'un BlockProvider est définie dans le [JSON Schema suivant](https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/BlockProviderConfig.json).
@@ -137,12 +140,12 @@ Exemple : Block Meteo
 ]
 ```
 
-En tant que BlockProvider, vous devez fournir un endpoint HTTP(S) fournissant au CMS Ouest France la défintion complète
-de vos Blocks : c'est le point de liaison entre vous et Ouest France.
+En tant que BlockProvider, vous devez fournir un endpoint HTTPS fournissant au CMS Ouest-France la défintion complète
+de vos Blocks : c'est le point de liaison entre vous et Ouest-France.
 
 # Validation d'un Block
 
-Pour valider et tester un Block, Ouest France vous fournit le [Block Runner](https://platform.sipaof.fr/) :
+Pour valider et tester un Block, Ouest-France vous fournit le [Block Runner](https://blockproviderrunner.prod.aws.ouest-france.fr/) :
 
 - Onglet "Runner" : permet de tester le rendu d'un Block
 
@@ -163,10 +166,10 @@ Pour valider et tester un Block, Ouest France vous fournit le [Block Runner](htt
 # Versionning des Blocks
 
 Les Blocks sont immuables (incluant paramètres de configuration, templates, CSS, JS et Fonts) : après enregistrement 
-de la version d'un Block, toute modification de cette dernière ne serait pris en compte par le CMS Ouest France. 
+de la version d'un Block, toute modification de cette dernière ne serait pas prise en compte par le CMS Ouest-France. 
 
 Aussi, pour mettre à jour le Block, il est nécessaire de fournir une nouvelle version et de la soumettre à la validation 
-plateforme Ouest France.
+plateforme Ouest-France.
 
 
 Le versionning des Blocks doit s'appuyer sur SemVer (Semantic Versioning) :
@@ -189,22 +192,22 @@ Des libellés supplémentaires peuvent être ajoutés pour les versions de pré-
 - Endpoint Block (si nécessaire) : développement backend au choix du BlockProvider (Java, C#, PHP, NodeJS ...)
 
 ## Positionnement du bloc dans la page
-Nous ajoutons le contenu HTML de votre bloc au sein de notre page au sein d'un element div ayant les propriétés CSS suivantes&nbsp;:
+
+Nous ajoutons le contenu HTML de votre bloc au sein de notre page dans un élément div ayant les propriétés CSS suivantes :
 
 ```
-position: relative; /* afin que tous vos éléments absolus soient bien placé relativement à votre bloc */
-overflow: hidden; /* pour ne pas déborder avec les absolus */
+position: relative; /* afin que tous vos éléments absolus soient bien placés relativement à votre bloc */
 ```
 
 Il fait donc partie intégrante du DOM principal. 
 
 Nous vous préconisons de rester dans le flux HTML, car par défaut nos positions ne prennent pas de place. Néanmoins si vous avez un bloc sortant du flux il existe des mécaniques à votre disposition pour redonner une taille à votre contenu&nbsp;:
 
-- float : vous pouvez mettre la classe Ouest-France "clearfix" à votre bloc (voir ci-dessous).
-- absolute : vous devez définir une hauteur et une largeur en CSS à votre bloc
+- float : vous pouvez mettre la classe "**clearfix**", disponible dans toutes les pages, sur votre bloc (voir ci-dessous).
+- absolute : vous **devez** définir une hauteur et une largeur en CSS à votre bloc
 - fixed : il s'agit d'un cas particulier qui doit être évité sauf validation préalable de notre équipe dédiée
 
-Pour information, les propriétés CSS suivantes sont définies au sein des pages des sites Ouest-France&nbsp;:
+Pour information, les propriétés CSS suivantes sont définies au sein des pages de la plateforme :
 
 ```
 box-sizing: border-box; /* est déjà définit pour vous sur '*' */
@@ -223,11 +226,12 @@ Définition de la classe clearfix :
 
 ## Consignes
 
-- Un Block ne devrait pas fournir ses propres CSS, Javascript ou Fonts mais devrait plutôt tirer parti des [Composants SipaUI](https://github.com/Ouest-France/SipaUI) ... si vous le devez vraiment (et pensez passer la validation de notre équipe plateforme) :
+- Un Block ne devrait pas fournir ses propres CSS, Javascript ou Fonts mais devrait plutôt tirer parti du [framework SipaUI](https://sipaui.sipaof.fr/) et de ses [Composants](https://sipaui.sipaof.fr/src/doc/030-framework/001-framework) ... si vous le devez vraiment (et pensez passer la validation de notre équipe plateforme) :
  chaque sélecteur CSS doit être préfixé par "bp-<nom_block>".
 
 Exemple : .bp-meteo .moteur-recherche{position:relative}
 
+- l'utilisation du composant HTML <iframe> est totalement PROHIBÉ au sein d'un Block
 - Les fichiers JS sont concaténés et chargés de manière asynchrone (ie. <script async ...>)
 - L'ensemble des fichiers JS de chaque Block est isolé dans une fonction JS au sein de notre page :
 
@@ -239,10 +243,10 @@ Exemple : .bp-meteo .moteur-recherche{position:relative}
 
 - Un BlockProvider doit répondre en moins de 150 ms lors de la phase de rendu, si vous ne répondez pas assez vite, votre Block ne sera pas rendu. 
 - Un Block doit être responsive. Les paliers médias query utilisés sur la plateforme sont les suivants :
-    - xs: extra-small à partir de 320px de largeur d'écran - correspond aux devices dit "mobile" (sera donc appliqué dans tous les cas).
-    - sm: small à partir de 768px de largeur d'écran - correspond aux devices dit "phablette" (sera donc appliqué à partir de 768px).
-    - md: medium à partir de 980px de largeur d'écran - correspond aux devices dit "tablette" (sera donc appliqué à partir de 980px).
-    - lg: large à partir de 1280px de largeur d'écran - correspond aux devices dit "desktop wide" (sera donc appliqué à partir de 1280px).
+    - xs: extra-small à partir de 320px de largeur d'écran - correspond aux devices dits "mobile" (sera donc appliqué dans tous les cas).
+    - sm: small à partir de 768px de largeur d'écran - correspond aux devices dits "phablette" (sera donc appliqué à partir de 768px).
+    - md: medium à partir de 980px de largeur d'écran - correspond aux devices dits "tablette" (sera donc appliqué à partir de 980px).
+    - lg: large à partir de 1280px de largeur d'écran - correspond aux devices dits "desktop wide" (sera donc appliqué à partir de 1280px).
 
 - Un Block ne doit pas contenir (sauf contre-avis de notre équipe validation) de sections titre HTML (ie. tags \<h1\> à \<h6\>) car ces dernières sont réservées pour notre équipe SEO. 
 - L'ensemble des endpoints liés à un Block (BlockConfig, BlockData, liens internes ...) doivent être chiffrés (ie. HTTPS)

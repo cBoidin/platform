@@ -8,7 +8,7 @@ const app = express();
 const config = require('common-env/withLogger')(console).getOrElseAll({
   port: 3000,
 
-  // from where we can access this server from outside (e.g. "https://mydomain.com:8083") we access to access ti
+  // where this server can be reached from outside (e.g. "https://mydomain.com:8083")
   endpoint: 'http://localhost:3000',
 });
 
@@ -24,7 +24,6 @@ app.get('/configurations', (req, res) =>
     {
       name: 'cms-block-provider-example-bitcoin',
       type: 'Display',
-      labels: [{ key: 'service', value: 'bitcoin' }],
       configurations: [
         {
           version: '1.0.0',
@@ -33,7 +32,7 @@ app.get('/configurations', (req, res) =>
             // we could also specify a FQDN
             url: `/block/bitcoin`,
             method: 'GET',
-            // we block depends on time so it's not pure and won't be cached for a long time
+            // this block depends on time, so it's not pure and won't be cached for a long time
             pure: false,
             required: ['threshold'],
             parameters: [
@@ -59,7 +58,6 @@ app.get('/configurations', (req, res) =>
           templates: [
             {
               name: 'default-theme',
-              labels: [],
               source: BLOCK_BITCOIN_TEMPLATE,
               engine: 'mustache',
               assets: {
@@ -71,7 +69,6 @@ app.get('/configurations', (req, res) =>
             },
             {
               name: 'troll-theme',
-              labels: [],
               source: BLOCK_BITCOIN_TEMPLATE,
               engine: 'mustache',
               assets: {

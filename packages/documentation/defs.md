@@ -11,31 +11,6 @@
 
 ### Documentation
 
-### `definitionsLabels`
-
-**Labels**
-
-Labels are key/value pairs that are attached to objects, such as BlockConfig. Labels are intended to be used to specify identifying attributes of objects that are meaningful and relevant to users, but do not directly imply semantics to the core system. Labels can be used to organize and to select subsets of objects. Labels can be attached to objects at creation time and subsequently added and modified at any time. Each object can have a set of key/value labels defined. Each Key must be unique for a given object.
-
-*Type*: array
-
-*Example*: `"release" : "stable", "release" : "canary"
-"service":"meteo", "service":"cinema"`
-
-### `definitionsLabels[]`
-
-### `definitionsLabel`
-
-**Label**
-
-A label is a key/value pair intended to be used to specify identifying attributes that are meaningful and relevant to users.
-
-*Type*: object
-
-### `definitionsLabel.key`
-
-### `definitionsLabel.value`
-
 ### `definitionsIdent`
 
 *Type*: string
@@ -45,14 +20,6 @@ A label is a key/value pair intended to be used to specify identifying attribute
 *Maximum length*: 50
 
 *Pattern*: `^[a-z-]+$`
-
-### `definitionsLabelValue`
-
-*Type*: string
-
-*Minimum length*: 3
-
-*Maximum length*: 50
 
 ### `definitionsBasicSemVer`
 
@@ -254,11 +221,11 @@ The BlockType typology is :
 
 **Template engine**
 
-The template engine to use to render this Block. *twig* is deprecated, always use 'mustache' instead, see: https://mustache.github.io
+The template engine to use to render this Block. *php-twig* is deprecated and will be removed, use 'mustache' instead, see: https://mustache.github.io
 
 *Type*: string
 
-*Allowed values*: `twig` `mustache` `php-twig`
+*Allowed values*: `mustache` `php-twig`
 
 ### `definitionsUIPropertyBasicTypes`
 

@@ -2,41 +2,9 @@
   "$id":
     "https://raw.githubusercontent.com/Ouest-France/platform/master/packages/schemas/defs.json",
   "definitions": {
-    "Labels": {
-      "type": "array",
-      "title": "Labels",
-      "description":
-        "Labels are key/value pairs that are attached to objects, such as BlockConfig. Labels are intended to be used to specify identifying attributes of objects that are meaningful and relevant to users, but do not directly imply semantics to the core system. Labels can be used to organize and to select subsets of objects. Labels can be attached to objects at creation time and subsequently added and modified at any time. Each object can have a set of key/value labels defined. Each Key must be unique for a given object.",
-      "example":
-        "\"release\" : \"stable\", \"release\" : \"canary\"\n\"service\":\"meteo\", \"service\":\"cinema\"",
-      "items": {
-        "$ref": "#/definitions/Label"
-      }
-    },
-    "Label": {
-      "type": "object",
-      "additionalProperties": false,
-      "title": "Label",
-      "description":
-        "A label is a key/value pair intended to be used to specify identifying attributes that are meaningful and relevant to users.",
-      "properties": {
-        "key": {
-          "$ref": "#/definitions/Ident"
-        },
-        "value": {
-          "$ref": "#/definitions/LabelValue"
-        }
-      },
-      "required": ["key", "value"]
-    },
     "Ident": {
       "type": "string",
       "pattern": "^[a-z-]+$",
-      "minLength": 3,
-      "maxLength": 50
-    },
-    "LabelValue": {
-      "type": "string",
       "minLength": 3,
       "maxLength": 50
     },
@@ -239,8 +207,14 @@
     "BlockTemplateEngine": {
       "type": "string",
       "title": "Template engine",
-      "description": "The template engine to use to render this Block. *twig* is deprecated, always use 'mustache' instead, see: https://mustache.github.io",
-      "enum": ["twig", "mustache", "php-twig"]
+      "description": "The template engine to use to render this Block. *php-twig* is deprecated and will be removed, use 'mustache' instead, see: https://mustache.github.io",
+      "enum": ["mustache", "php-twig"]
+    },
+    "BlockTemplateTargetFormat": {
+      "type": "string",
+      "title": "Template target format",
+      "description": "The template target format to use to render this Block",
+      "enum": ["html", "amp"]
     },
     "UIPropertyBasicTypes": {
       "enum": [ "number", "string", "boolean" ]
@@ -265,6 +239,18 @@
         "required": {
           "description": "list mandatory configuration field",
           "$ref": "http://json-schema.org/draft-06/schema#/definitions/stringArray"
+        },
+        "x-section-type": {
+          "description": "Section type is used to categorize sections by impacting their rendering and access. This information is primarily intended for formatting forms  (shortcut icon, appearance, ...). This field is a free string and its processing is carried by contract consumers (PageBuilder)",
+          "type": "string"
+        },
+        "x-properties-order": {
+          "description": "Properties display order (if a property is not present, it appears at the end of the generated form)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
         },
         "properties": {
           "minProperties": 1,
